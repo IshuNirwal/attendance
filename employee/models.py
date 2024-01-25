@@ -1,9 +1,33 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from barcode import Code128
 from barcode.writer import ImageWriter
 
-class Employee(AbstractUser):
+class UserManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError('User must have an email address')
+        user = self.model(
+            email=self.normalize_email(email),
+            name=name,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    def create_superuser(self, email, name, password=None):
+        user = self.create_user(
+            email,
+            password=password,
+            name=name,
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+ 
+
+class Employee(AbstractBaseUser):
     ROLES = (
         ('admin', 'Admin'),
         ('employee', 'Employee'),
@@ -16,16 +40,10 @@ class Employee(AbstractUser):
     employee_id = models.CharField(max_length=10, unique=True, blank=True, null=True)
     barcode = models.ImageField(upload_to='barcode/', blank=True, null=True)
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='employee_groups',
-        blank=True,
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='employee_user_permissions',
-        blank=True,
-    )
+
+    objects = UserManager()
+    USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = ['name']
 
     def generate_barcode(self):
         code = Code128(self.employee_id, writer=ImageWriter())
@@ -35,7 +53,7 @@ class Employee(AbstractUser):
         code.save(full_path)
         return barcode_path
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.employee_id:
             last_employee = Employee.objects.order_by('-id').first()
             if last_employee:
@@ -45,9 +63,7 @@ class Employee(AbstractUser):
                 new_id = "AP001"
             self.employee_id = new_id
 
-        self.username = self.name 
-       
         barcode_path = self.generate_barcode()
         self.barcode = barcode_path
 
-        super().save()
+        super().save(*args, **kwargs)
