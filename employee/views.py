@@ -3,9 +3,8 @@ from rest_framework import status
 from .models import Employee
 from .serializers import *
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -34,10 +33,8 @@ class EmployeeLoginView(APIView):
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
-            print(email,password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                print(token)
-                return Response({'token': token}, status=status.HTTP_200_OK)
+                return Response({"message":"Login Successful",'token': token}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

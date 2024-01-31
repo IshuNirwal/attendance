@@ -24,9 +24,11 @@ class UserManager(BaseUserManager):
             **extra_fields,
         )
         user.is_admin = True
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
-
 
 
 class Employee(AbstractBaseUser):
@@ -43,25 +45,12 @@ class Employee(AbstractBaseUser):
     barcode = models.ImageField(upload_to='barcode/', blank=True, null=True)
 
     is_admin = models.BooleanField(default=False)
-
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    
     objects = UserManager()
     USERNAME_FIELD = 'email'
-
-    @property
-    def is_active(self):
-        return True  
-
-    @property
-    def is_staff(self):
-        return self.is_admin
-
-    def has_perm(self, perm, obj=None):
-       
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return self.is_admin
-
 
     def generate_barcode(self):
         code = Code128(self.employee_id, writer=ImageWriter())
@@ -85,3 +74,9 @@ class Employee(AbstractBaseUser):
         self.barcode = barcode_path
 
         super().save(*args, **kwargs)
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
