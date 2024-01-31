@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'atten.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'attendance_portal',
         'USER':'postgres',
         'PASSWORD':'admin',
         'HOST':'localhost',
-        'PORT':'5433'
+        'PORT':'5432'
     }
 }
 
