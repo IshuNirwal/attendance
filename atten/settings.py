@@ -143,7 +143,7 @@ USE_TZ = True
 AUTH_USER_MODEL='employee.Employee'
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 MEDIA_URL='/media/'
 
 # Default primary key field type
@@ -171,6 +171,4 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 }
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
