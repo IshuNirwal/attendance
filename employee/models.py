@@ -4,28 +4,30 @@ from barcode import Code128
 from barcode.writer import ImageWriter
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name, password=None, **extra_fields):
         if not email:
             raise ValueError('User must have an email address')
         user = self.model(
             email=self.normalize_email(email),
             name=name,
+            **extra_fields,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, email, name, password=None):
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('name', 'Superuser')
         user = self.create_user(
             email,
             password=password,
-            name=name,
+            **extra_fields,
         )
         user.is_admin = True
         user.save(using=self._db)
         return user
 
- 
+
 
 class Employee(AbstractBaseUser):
     ROLES = (
@@ -40,10 +42,26 @@ class Employee(AbstractBaseUser):
     employee_id = models.CharField(max_length=10, unique=True, blank=True, null=True)
     barcode = models.ImageField(upload_to='barcode/', blank=True, null=True)
 
+    is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['name']
+
+    @property
+    def is_active(self):
+        return True  
+
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+       
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
+
 
     def generate_barcode(self):
         code = Code128(self.employee_id, writer=ImageWriter())
