@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-oul7o9f3b^&-o=1re%1vp@$)9a24^2i+u+l3o$kwe=&0u-_x&7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -77,16 +77,24 @@ WSGI_APPLICATION = 'atten.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'attendance_portal',
+#         'USER':'postgres',
+#         'PASSWORD':'admin',
+#         'HOST':'localhost',
+#         'PORT':'5432'
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'attendance_portal',
-        'USER':'postgres',
-        'PASSWORD':'admin',
-        'HOST':'localhost',
-        'PORT':'5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
