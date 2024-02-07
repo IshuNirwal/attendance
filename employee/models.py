@@ -80,3 +80,9 @@ class Employee(AbstractBaseUser):
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
+
+
+class Attendance(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    arrivaltime = models.DateTimeField(auto_now_add=True)
+    departuretime = models.DateTimeField(auto_now_add=True)

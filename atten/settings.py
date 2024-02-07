@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +29,7 @@ SECRET_KEY = 'django-insecure-oul7o9f3b^&-o=1re%1vp@$)9a24^2i+u+l3o$kwe=&0u-_x&7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '65.0.87.100']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,13 +44,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'employee',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -172,9 +172,5 @@ SIMPLE_JWT = {
 
     "JTI_CLAIM": "jti",
 }
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://65.0.87.100/",
-]
 
-CORS_ALLOW_CREDENTIALS = True
+
