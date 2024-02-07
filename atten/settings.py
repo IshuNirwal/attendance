@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'atten.wsgi.application'
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'attendance_portal',
-#         'USER':'postgres',
+#    'USER':'postgres',
 #         'PASSWORD':'admin',
 #         'HOST':'localhost',
 #         'PORT':'5432'
@@ -99,7 +99,7 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-       
+
     ],
 }
 
@@ -135,27 +135,26 @@ USE_I18N = True
 USE_TZ = True
 
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-AUTH_USER_MODEL='employee.Employee'
+AUTH_USER_MODEL = 'employee.Employee'
 
 STATIC_URL = '/static/'
 
-MEDIA_URL='/media/'
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT=BASE_DIR/'media'
+MEDIA_ROOT = BASE_DIR/'media'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    
+
 
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
