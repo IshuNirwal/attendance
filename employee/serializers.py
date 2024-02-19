@@ -22,7 +22,7 @@ class EmployeeLoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'password']
 
 class AttendanceSerializer(serializers.ModelSerializer):
-    barcode_image = serializers.ImageField(required=True)  
+    qrCode = serializers.CharField(write_only=True)  
 
     class Meta:
         model=Attendance

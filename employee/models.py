@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from barcode import Code128
-from barcode.writer import ImageWriter
+import qrcode 
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
@@ -52,13 +52,26 @@ class Employee(AbstractBaseUser):
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
-    def generate_barcode(self):
-        code = Code128(self.employee_id, writer=ImageWriter())
-        barcode_filename = f"{self.employee_id}"
-        barcode_path = f'barcode/{barcode_filename}'
-        full_path = f'media/{barcode_path}'  
-        code.save(full_path)
-        return barcode_path
+    def __str__(self) :
+        return f"{self.name}"
+
+    def generate_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(self.employee_id)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        qr_filename = f"{self.employee_id}.png" 
+        qr_path = f'barcode/{qr_filename}'  
+        full_path = f'media/{qr_path}'  
+        img.save(full_path)
+
+        return qr_path
 
     def save(self, *args, **kwargs):
         if not self.employee_id:
@@ -70,8 +83,8 @@ class Employee(AbstractBaseUser):
                 new_id = "AP001"
             self.employee_id = new_id
 
-        barcode_path = self.generate_barcode()
-        self.barcode = barcode_path
+        qr_path = self.generate_qr_code()  
+        self.barcode = qr_path 
 
         super().save(*args, **kwargs)
 
@@ -86,3 +99,7 @@ class Attendance(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     arrivaltime = models.DateTimeField(auto_now_add=True)
     departuretime = models.DateTimeField(auto_now_add=True)
+    is_present=models.BooleanField(default=False)
+
+    def __str__(self) :
+        return f"{self.employee}"

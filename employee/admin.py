@@ -23,6 +23,6 @@ class EmployeeAdmin(BaseUserAdmin):
 admin.site.register(Employee, EmployeeAdmin)
 
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ['employee', 'arrivaltime', 'departuretime']
+    list_display = ['employee', 'arrivaltime', 'departuretime','is_present']
 
 admin.site.register(Attendance, AttendanceAdmin)
