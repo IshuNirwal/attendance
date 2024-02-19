@@ -1,11 +1,12 @@
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Employee
+from .models import *
 from .serializers import *
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
+from datetime import datetime
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -26,6 +27,7 @@ class EmployeeRegistrationView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class EmployeeLoginView(APIView):
 
     def post(self, request):
@@ -34,10 +36,27 @@ class EmployeeLoginView(APIView):
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             user = authenticate(email=email, password=password)
-            print(email,password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                print(token)
-                return Response({'token': token}, status=status.HTTP_200_OK)
+                return Response({"message":"Login Successful",'token': token}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ScanQRCodeView(APIView):
+    def post(self, request):
+        qrcode_data = request.data.get('qrCode')
+        if not qrcode_data:
+            return Response({'error': 'QR code data not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            employee = Employee.objects.get(employee_id=qrcode_data) 
+            attendance, created = Attendance.objects.get_or_create(employee=employee)
+            if created:  
+                attendance.arrival_time = datetime.now()
+                attendance.save()
+            return Response({'message': 'QR code verified successfully', 'employeeName': employee.name, 'employeeId': employee.employee_id}, status=status.HTTP_200_OK)
+        except Employee.DoesNotExist:
+            return Response({'error': 'QR code does not match any records'}, status=status.HTTP_404_NOT_FOUND)
+        
+
