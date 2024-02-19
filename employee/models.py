@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+   
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('name', 'Superuser')
         user = self.create_user(
@@ -24,6 +24,9 @@ class UserManager(BaseUserManager):
             **extra_fields,
         )
         user.is_admin = True
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = True
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
@@ -36,14 +39,14 @@ class Employee(AbstractBaseUser):
         ('admin', 'Admin'),
         ('employee', 'Employee'),
     )
-
+ 
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     role = models.CharField(max_length=20, choices=ROLES, default='employee')
     employee_id = models.CharField(max_length=10, unique=True, blank=True, null=True)
     barcode = models.ImageField(upload_to='barcode/', blank=True, null=True)
-
+ 
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
