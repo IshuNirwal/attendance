@@ -53,6 +53,7 @@ class ScanQRCodeView(APIView):
             attendance, created = Attendance.objects.get_or_create(employee=employee)
             if created:  
                 attendance.arrival_time = datetime.now()
+                attendance.is_present=True
                 attendance.save()
             return Response({'message': 'QR code verified successfully', 'employeeName': employee.name, 'employeeId': employee.employee_id}, status=status.HTTP_200_OK)
         except Employee.DoesNotExist:
