@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     'employee',
 ]
 
@@ -175,5 +176,8 @@ SIMPLE_JWT = {
 
     "JTI_CLAIM": "jti",
 }
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173/",
+   
+]
 
